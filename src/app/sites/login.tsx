@@ -1,31 +1,91 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FloatingInput, FloatingLabel } from "@/components/ui/floating_label_input";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
+import { initialize, getSocket } from "../service/streamelements";
 
 interface LoginProps {
     onLogin: (loggedIn: boolean) => void;
+    setData: (channelId: string | undefined) => void;
 }
 
-export default function Login({ onLogin }: LoginProps) {
-    const handleLogin = () => {
-        onLogin(true);
+export default function Login({ onLogin, setData }: LoginProps) {
+    const handleLogin = (loggedIn: boolean) => {
+        onLogin(loggedIn);
     }
 
     const tryCredentials = async () => {
-        const token = document.getElementById('#token');
-        if (!token) {
-                toast('test', {
-                    description: 'yo was geht',
-                    duration: 5000,
-                    action: {
-                        label: 'Undo',
-                        onClick: () => console.log('Undo')
+        const toastId = toast.loading('Trying to connect...', {
+            style: {
+                background: 'black',
+                borderWidth: '0.5px',   
+                borderColor: 'gray',
+                color: 'white'
+            },
+            duration: 3 * 1000
+        });
+
+        const inputField = document.getElementById('token') as HTMLInputElement;
+        if (inputField === null) return;
+        const token = inputField.value as string;
+        if (token === '') return;
+
+        const button = document.getElementById('login') as HTMLButtonElement;
+        if (button === null) return;
+        button.disabled = true;
+
+        localStorage.setItem('token', token);
+
+        initialize({ token: token }, setData)
+            .then((success) => {
+                if (success) {      
+                    toast.success('Connected with StreamElements', {
+                        id: toastId,
+                        style: {
+                            background: 'rgb(1, 31, 16)',
+                            borderWidth: '0.5px',   
+                            borderColor: 'rgb(2, 62, 30)',
+                            color: 'rgb(93, 244, 169)'
+                        }
+                    });
+                    handleLogin(true);
+                } else {             
+                    toast.warning('Could not connect with StreamElements', {
+                        id: toastId,
+                        style: {
+                            background: 'rgb(44, 6, 8)',
+                            borderWidth: '0.5px',   
+                            borderColor: 'rgb(76, 4, 9)',
+                            color: 'rgb(254, 158, 161)'
+                        }
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('An error occurred during connecting with streamelements websocket:', error);           
+                toast.warning('Could not connect with StreamElements', {
+                    id: toastId,
+                    style: {
+                        background: 'rgb(44, 6, 8)',
+                        borderWidth: '0.5px',   
+                        borderColor: 'rgb(76, 4, 9)',
+                        color: 'rgb(254, 158, 161)'
                     }
-                })
-        }
-    }
+                });
+            })
+
+        button.disabled = false;
+    };
+
+    // direct login
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token === null) return;
+
+        const inputField = document.getElementById('token') as HTMLInputElement;
+        inputField.value = token as string;
+    }, []);
 
     return (
         <div className="mt-10 p-3">
@@ -53,7 +113,7 @@ export default function Login({ onLogin }: LoginProps) {
                         </Button>
                     </div>
 
-                    <Button className="bg-color_purple hover:bg-color_darkpurple" onClick={tryCredentials}>Connect</Button>
+                    <Button id='login' className="bg-color_purple hover:bg-color_darkpurple" onClick={tryCredentials}>Connect</Button>
                 </CardContent>
             </Card>
         </div>
@@ -73,12 +133,23 @@ function handlePaste() {
         toast('Pasted from clipboard', {
             style: {
                 background: 'black',
-                border: '[#333333]',
+                borderWidth: '0.5px',   
+                borderColor: 'gray',
                 color: 'white'
             },
             duration: 5000
         });
       }).catch(err => {
         console.error('Could not read clipboard:', err);
+
+        toast.error('Could not read clipboard', {
+            style: {
+                background: 'rgb(44, 6, 8)',
+                borderWidth: '2px',   
+                borderColor: 'rgb(38, 4, 6)',
+                color: 'rgb(254, 158, 161)'
+            },
+            duration: 5000
+        });
       });
 }
