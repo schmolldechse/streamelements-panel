@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Login from "./sites/login";
-import Panel from "./sites/panel";
+import { useState } from 'react';
+import Login from './sites/login';
+import Panel from './sites/panel';
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
