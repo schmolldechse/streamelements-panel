@@ -118,3 +118,19 @@ body {
 .piss_of_white_shit {
   box-shadow: none !important;
 }
+
+#first::-webkit-scrollbar ,
+#second::-webkit-scrollbar {
+  width: 10px;
+}
+
+#first::-webkit-scrollbar-track ,
+#second::-webkit-scrollbar-track {
+  background: #030712; 
+}
+
+#first::-webkit-scrollbar-thumb ,
+#second::-webkit-scrollbar-thumb {
+  background: #A94EF3;
+  border-radius: 4px;
+}

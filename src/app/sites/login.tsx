@@ -88,7 +88,7 @@ export default function Login({ onLogin, setData }: LoginProps) {
     }, []);
 
     return (
-        <div className='mt-10 p-3'>
+        <div className='mt-10 p-3 w-full'>
             <Card className='bg-color_darkblue border-color_gray'>
                 <CardHeader>
                     <CardTitle className='text-white'>Setup</CardTitle>

@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-        <main>
+        <main className='p-3 flex gap-3'>
           {children}
         </main>
         <Toaster />
