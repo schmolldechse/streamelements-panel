@@ -23,18 +23,7 @@ var ACTIVITIES_API = 'https://api.streamelements.com/kappa/v2/activities/{0}'
 const REQUEST_TYPES = JSON.stringify(['tip', 'subscriber', 'cheer']);
 
 const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
-    a: <div id='first' className='text-white overflow-y-scroll'>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
+    a: <div id='first' className='panel text-white overflow-y-scroll'>
         <p>test</p>
         <p>test</p>
         <p>test</p>
@@ -50,17 +39,7 @@ const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
         <p>test</p>
         <p>test</p>
     </div>,
-    b: <div id='second' className='text-white overflow-y-scroll'>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
+    b: <div id='second' className='panel text-white overflow-y-scroll'>
         <p>lol</p>
         <p>lol</p>
         <p>lol</p>
@@ -81,7 +60,7 @@ interface PanelProps {
 export default function Panel({ channelId }: PanelProps) {
     const [isPaused, setPaused] = useState(false);
     const [isMuted, setMuted] = useState(false);
-    const alertVisible = isPaused || isMuted;
+    const [isAlertVisible, setAlertVisible] = useState(false);
 
     const togglePause = () => {
         setPaused(!isPaused);
@@ -93,8 +72,9 @@ export default function Panel({ channelId }: PanelProps) {
 
     const animation = useSpring({
         from: { opacity: 0, transform: 'translateY(100%)' },
-        to: { opacity: alertVisible ? 1 : 0, transform: alertVisible ? 'translateY(0%)' : 'translateY(100%)' },
-        config: { duration: 500 }
+        to: { opacity: isAlertVisible ? 1 : 0, transform: isAlertVisible ? 'translateY(0%)' : 'translateY(100%)' },
+        config: { duration: 500 },
+        immediate: !isAlertVisible
     });
 
     useEffect(() => {
@@ -166,6 +146,10 @@ export default function Panel({ channelId }: PanelProps) {
             });
         })
     }, [channelId]);
+
+    useEffect(() => {
+        setAlertVisible(isPaused || isMuted);
+    }, [isPaused, isMuted])
 
     return (
         <>

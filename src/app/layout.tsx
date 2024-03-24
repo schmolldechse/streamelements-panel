@@ -16,6 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
+      <head>
+        <script src='scripts/dragscroll.ts' defer />
+      </head>
+
       <body className={inter.className}>
         <main className='p-3 flex gap-3'>
           {children}
