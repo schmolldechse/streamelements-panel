@@ -85,6 +85,8 @@ export default function Login({ onLogin, setData }: LoginProps) {
 
         const inputField = document.getElementById('token') as HTMLInputElement;
         inputField.value = token as string;
+
+        setTimeout(() => tryCredentials(), 50);
     }, []);
 
     return (
