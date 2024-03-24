@@ -18,7 +18,7 @@ export default function Home() {
 
   return (
     <>
-    {isLoggedIn ? (
+    {isLoggedIn && channelId ? (
       <Panel channelId={channelId} />
     ) : (
       <Login onLogin={handleLogin} setData={setData} />

@@ -23,15 +23,7 @@ var ACTIVITIES_API = 'https://api.streamelements.com/kappa/v2/activities/{0}'
 const REQUEST_TYPES = JSON.stringify(['tip', 'subscriber', 'cheer']);
 
 const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
-    a: <div id='first' className='panel text-white overflow-y-scroll'>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
+    a: <div id='first' className='text-white overflow-y-scroll'>
         <p>test</p>
         <p>test</p>
         <p>test</p>
@@ -39,7 +31,7 @@ const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
         <p>test</p>
         <p>test</p>
     </div>,
-    b: <div id='second' className='panel text-white overflow-y-scroll'>
+    b: <div id='second' className='text-white overflow-y-scroll'>
         <p>lol</p>
         <p>lol</p>
         <p>lol</p>
@@ -54,7 +46,7 @@ const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
 }
 
 interface PanelProps {
-    channelId: string | undefined;
+    channelId: string;
 }
 
 export default function Panel({ channelId }: PanelProps) {

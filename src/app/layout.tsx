@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <script src='scripts/dragscroll.ts' defer />
+        <script src='./scripts/dragscroll.ts' defer />
       </head>
 
       <body className={inter.className}>

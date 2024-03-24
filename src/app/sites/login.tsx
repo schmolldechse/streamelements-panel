@@ -87,7 +87,7 @@ export default function Login({ onLogin, setData }: LoginProps) {
         inputField.value = token as string;
 
         setTimeout(() => tryCredentials(), 50);
-    }, []);
+    }, [tryCredentials]);
 
     return (
         <div className='mt-10 p-3 w-full'>
