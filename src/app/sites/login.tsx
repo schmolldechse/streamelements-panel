@@ -4,6 +4,7 @@ import { FloatingInput, FloatingLabel } from '@/components/ui/floating_label_inp
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 import { initialize } from '../service/streamelements';
+import { shell } from 'electron';
 
 interface LoginProps {
     onLogin: (loggedIn: boolean) => void;
@@ -78,6 +79,10 @@ export default function Login({ onLogin, setData }: LoginProps) {
         button.disabled = false;
     };
 
+    const handleLinkClick = (url: string) => {
+        window.api.openLink(url);
+    };
+
     // direct login
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -95,7 +100,7 @@ export default function Login({ onLogin, setData }: LoginProps) {
                 <CardHeader>
                     <CardTitle className='text-white'>Setup</CardTitle>
                     <CardDescription className='text-white'>Enter your StreamElements JWT-Token to continue. You can find it on the 
-                        <a href='https://streamelements.com/dashboard/account/channels' target='_blank' rel='noreferrer' className='color_purple'> account page </a> 
+                        <a onClick={() => handleLinkClick('https://streamelements.com/dashboard/account/channels')} target='_blank' rel='noreferrer' className='color_purple hover:cursor-pointer'> account page </a> 
                         in the dashboard
                     </CardDescription>
                 </CardHeader>
