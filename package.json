@@ -9,7 +9,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
     "e_dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
     "e_build": "next build && electron-builder"
   },
@@ -38,7 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
-    "@types/react": "^18",
+    "@types/react": "^18.2.70",
     "@types/react-dom": "^18",
     "7zip-bin": "^5.2.0",
     "autoprefixer": "^10.0.1",

@@ -4,7 +4,6 @@ import { FloatingInput, FloatingLabel } from '@/components/ui/floating_label_inp
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 import { initialize } from '../service/streamelements';
-import { shell } from 'electron';
 
 interface LoginProps {
     onLogin: (loggedIn: boolean) => void;
@@ -30,7 +29,18 @@ export default function Login({ onLogin, setData }: LoginProps) {
         const inputField = document.getElementById('token') as HTMLInputElement;
         if (inputField === null) return;
         const token = inputField.value as string;
-        if (token === '') return;
+        if (token === '') {
+            toast.warning('Please enter your JWT-Token', {
+                id: toastId,
+                style: {
+                    background: 'rgb(44, 6, 8)',
+                    borderWidth: '0.5px',   
+                    borderColor: 'rgb(76, 4, 9)',
+                    color: 'rgb(254, 158, 161)'
+                }
+            });
+            return;
+        };
 
         const button = document.getElementById('login') as HTMLButtonElement;
         if (button === null) return;
@@ -80,7 +90,11 @@ export default function Login({ onLogin, setData }: LoginProps) {
     };
 
     const handleLinkClick = (url: string) => {
-        window.api.openLink(url);
+        if (typeof window !== 'undefined' && (window as any).api && (window as any).api.openLink) {
+            (window as any).api.openLink(url);
+        } else {
+            window.open(url, '_blank');
+        }
     };
 
     // direct login
@@ -149,7 +163,7 @@ function handlePaste() {
       }).catch(err => {
         console.error('Could not read clipboard:', err);
 
-        toast.error('Could not read clipboard', {
+        toast.error('Could not paste. Read clipboard permissions are denied.', {
             style: {
                 background: 'rgb(44, 6, 8)',
                 borderWidth: '2px',   

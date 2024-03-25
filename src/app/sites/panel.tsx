@@ -197,7 +197,6 @@ export default function Panel({ channelId }: PanelProps) {
             </animated.div>
         )}
         </div>
-            
         </>
     )
 }
