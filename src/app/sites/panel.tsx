@@ -175,27 +175,29 @@ export default function Panel({ channelId }: PanelProps) {
 
             </header>
 
-        <div className='h-[calc(100vh-50px)] mt-[50px]'>
-            <Mosaic<string>
-                renderTile={(id) => ELEMENT_MAP[id]}
-                initialValue={{
-                    direction: 'column',
-                    first: 'a',
-                    second: 'b',
-                    splitPercentage: 50
-                }} 
+            <div className='h-[calc(100vh-50px)] mt-[50px]'>
+                <Mosaic<string>
+                    renderTile={(id) => ELEMENT_MAP[id]}
+                    initialValue={{
+                        direction: 'column',
+                        first: 'a',
+                        second: 'b',
+                        splitPercentage: 50
+                    }} 
                 />
-        </div>
+            </div>
 
-        {(isPaused || isMuted) && (
-            <animated.div
-                className='w-full h-6 uppercase font-bold bg-red-500 fixed bottom-0 z-50'
-                style={animation}> 
-                <p className='text-black text-center'>
-                    ALERTS {isPaused && 'PAUSED'} {isPaused && isMuted && ' & '} { isMuted && 'MUTED' }
-                </p>
-            </animated.div>
-        )}
+            {(isPaused || isMuted) && (
+                <animated.div
+                    className='w-full h-6 uppercase font-bold bg-red-500 fixed bottom-0 z-50'
+                    style={animation}> 
+                    <p className='text-black text-center'>
+                        ALERTS {isPaused && 'PAUSED'} {isPaused && isMuted && ' & '} { isMuted && 'MUTED' }
+                    </p>
+                </animated.div>
+            )}
+
+            <script src='./scripts/dragscroll.ts' defer />
         </div>
         </>
     )

@@ -28,7 +28,7 @@ export function initialize({ token }: { token: string }, setData: (data: string)
             resolve(true);
         });
         socket.on('unauthorized', () => {
-            console.log('Given token was is not valid or correct');
+            console.log('Given token was not valid or correct');
 
             resolve(false);
         })
