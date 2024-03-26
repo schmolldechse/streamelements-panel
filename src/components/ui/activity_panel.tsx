@@ -14,7 +14,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities }: Acti
     const listRef = useRef<List>(null);
     const rowHeights = useRef<{ [key: number]: number }>({});
  
-    const Row = ({ index, style }) => {
+    const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
         const rowRef = useRef<HTMLDivElement>(null);
 
         useEffect(() => {
@@ -24,7 +24,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities }: Acti
         }, [rowRef]);
 
         return (
-            <Activity activity={activities[index]} style={style} ref={rowRef} index={index} />
+            <Activity activity={activities[index]} style={style} index={index} />
         );
     };
 

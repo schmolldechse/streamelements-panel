@@ -13,10 +13,7 @@ import * as Switch from '@radix-ui/react-switch';
 
 import { version, author } from './../../../package.json';
 
-import UAParser from 'ua-parser-js';
 import { ChevronRightIcon } from 'lucide-react';
-
-const parser = new UAParser();
 
 /*
  * {0} represents the channelId
@@ -64,7 +61,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
      * SplitScreen settings
      */
     const [splitScreenEnabled, setSplitScreenEnabled] = useState(true);
-    const [splitScreenHorizontal, setSplitScreenHorizontal] = useState(true);
+    const [splitScreenHorizontal, setSplitScreenHorizontal] = useState(false);
 
     const animation = useSpring({
         from: { opacity: 0, transform: 'translateY(100%)' },
@@ -147,7 +144,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
 
     useEffect(() => {
         fetchData();
-    }, [channelId]);
+    }, []);
 
     useEffect(() => {
         setAlertVisible(isPaused || isMuted);

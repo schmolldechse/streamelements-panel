@@ -36,7 +36,6 @@
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "ua-parser-js": "^1.0.37",
     "wait-on": "^7.2.0"
   },
   "devDependencies": {
