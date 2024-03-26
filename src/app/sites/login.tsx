@@ -5,6 +5,8 @@ import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 import { initialize } from '../service/streamelements';
 
+import * as Switch from '@radix-ui/react-switch';
+
 interface LoginProps {
     onLogin: (loggedIn: boolean) => void;
     setData: (channelId: string | undefined) => void;
