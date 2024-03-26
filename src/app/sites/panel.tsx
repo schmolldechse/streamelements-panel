@@ -5,7 +5,7 @@ import { Mosaic } from 'react-mosaic-component';
 import { toast } from 'sonner';
 
 import './../styles/react-mosaic-component.css';
-import { fetchLatest, initIncoming, initMuteEvent, initPauseEvent } from '../service/streamelements';
+import { emptyActivities, fetchLatest, initIncoming, initMuteEvent, initPauseEvent } from '../service/streamelements';
 import { ActivityPanel } from '@/components/ui/activity_panel';
 import * as Menubar from '@radix-ui/react-menubar';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -185,6 +185,8 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                     }}>Info</Menubar.Item>
 
                                     <Menubar.Item className='relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-[#1F2937] focus:text-white' onSelect={() => {
+                                        setActivities([]);
+                                        emptyActivities();
                                         setElementMap(createElementMap([]));
                                         fetchData();
                                     }}>Reload Activities & Overlay</Menubar.Item>
@@ -226,8 +228,8 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                             <ChevronRightIcon />
                                         </Menubar.SubTrigger>
 
-                                        <Menubar.SubContent className='ml-3 py-2 pr-9 px-3 bg-color_darkblue border-color_gray border-2 rounded grid gap-2' sticky='always'>
-                                            <Menubar.Item className='relative text-white flex justify-between gap-5 text-sm items-center'>
+                                        <Menubar.SubContent className='ml-3 py-2 px-3 bg-color_darkblue border-color_gray border-2 rounded grid gap-2' sticky='always'>
+                                            <Menubar.Item className='relative text-white flex justify-between gap-5 text-sm items-center focus:bg-[#1F2937] focus:rounded h-9 focus:text-white'>
                                                 <div className='flex justify-between gap-5 text-sm items-center'>
                                                     <Switch.Root
                                                         className='w-[50px] h-[25px] bg-color_purple rounded-full relative data-[state=checked]:bg-color_purple data-[state=unchecked]:bg-[#202937]'
@@ -245,23 +247,25 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                                 </div>
                                             </Menubar.Item>
 
-                                            <Menubar.Item className='relative text-white flex justify-between gap-5 text-sm items-center'>
-                                                <div className='flex justify-between gap-5 text-sm items-center'>
-                                                    <Switch.Root
-                                                        className='w-[50px] h-[25px] bg-color_purple rounded-full relative data-[state=checked]:bg-color_purple data-[state=unchecked]:bg-[#202937]'
-                                                        onCheckedChange={(checked: boolean) => {
-                                                            setSplitScreenHorizontal(checked);
-                                                        }} 
-                                                        onClick={(event: React.MouseEvent) => {
-                                                            event.stopPropagation();
-                                                        }}
-                                                        defaultChecked={splitScreenHorizontal}
-                                                    >
-                                                        <Switch.Thumb className='bg-[#030712] block w-[21px] h-[21px] rounded-full will-change-transform transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[27px]' />
-                                                    </Switch.Root>
-                                                    {splitScreenHorizontal ? 'Horizontal' : 'Vertical'}
-                                                 </div>
-                                            </Menubar.Item>
+                                            {splitScreenEnabled && (
+                                                <Menubar.Item className='relative text-white flex justify-between gap-5 text-sm items-center focus:bg-[#1F2937] focus:text-white focus:bg-[#1F2937] focus:rounded h-9 focus:text-white'>
+                                                    <div className='flex justify-between gap-5 text-sm items-center'>
+                                                        <Switch.Root
+                                                            className='w-[50px] h-[25px] bg-color_purple rounded-full relative data-[state=checked]:bg-color_purple data-[state=unchecked]:bg-[#202937]'
+                                                            onCheckedChange={(checked: boolean) => {
+                                                                setSplitScreenHorizontal(checked);
+                                                            }} 
+                                                            onClick={(event: React.MouseEvent) => {
+                                                                event.stopPropagation();
+                                                            }}
+                                                            defaultChecked={splitScreenHorizontal}
+                                                        >
+                                                            <Switch.Thumb className='bg-[#030712] block w-[21px] h-[21px] rounded-full will-change-transform transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[27px]' />
+                                                        </Switch.Root>
+                                                        {splitScreenHorizontal ? 'Horizontal' : 'Vertical'}
+                                                    </div>
+                                                </Menubar.Item>
+                                            )}
                                         </Menubar.SubContent>
                                     </Menubar.Sub>
 
@@ -275,14 +279,14 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
             <div className='h-[calc(100vh-50px)] mt-[50px]'>
                 {splitScreenEnabled ? (
                     <Mosaic<string>
-                    renderTile={(id, path) => elementMap[id]()}
-                    initialValue={{
-                        direction: splitScreenHorizontal ? 'row' : 'column',
-                        first: 'a',
-                        second: 'b',
-                        splitPercentage: 50
-                    }} 
-                />
+                        renderTile={(id, path) => elementMap[id]()}
+                        initialValue={{
+                            direction: splitScreenHorizontal ? 'row' : 'column',
+                            first: 'a',
+                            second: 'b',
+                            splitPercentage: 50
+                        }} 
+                    />
                 ) : (
                     <ActivityPanel activities={activities} />
                 )}

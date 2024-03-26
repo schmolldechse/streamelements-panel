@@ -219,4 +219,8 @@ function fetchActivity(document: any, result: (result: any) => void) {
     }
 }
 
-export { initialize, initPauseEvent, initMuteEvent, initIncoming, getSocket, fetchLatest, fetchActivity };
+function emptyActivities() {
+    fetchedActivities = [];
+}
+
+export { emptyActivities, initialize, initPauseEvent, initMuteEvent, initIncoming, getSocket, fetchLatest, fetchActivity };
