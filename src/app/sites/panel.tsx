@@ -99,8 +99,8 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
     const toggleSetting = (panel: string, settingKey: string, newValue: boolean) => {
         setSettings(prevSettings => ({
             ...prevSettings,
-            [panel]: {
-                ...prevSettings[panel],
+            [panel as keyof typeof prevSettings]: {
+                ...prevSettings[panel as keyof typeof prevSettings],
                 [settingKey]: newValue
             }
         }));
