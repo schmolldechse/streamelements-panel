@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "./button";
+import { toast } from "sonner";
 
 // {0} represents the channelId
 var API_URL = 'https://api.streamelements.com/kappa/v3/overlays/{0}/action';
@@ -75,6 +76,16 @@ export const Skip = ({ channelId, className }: SkipProps) => {
 };
 
 function toggleSkip (channelId: string): void {
+    const toastId = toast.loading('Skiping activity...', {
+        style: {
+            background: 'black',
+            borderWidth: '0.5px',   
+            borderColor: 'gray',
+            color: 'white'
+        },
+        duration: 3 * 1000
+    });
+
     fetch(API_URL.replace('{0}', channelId), {
         method: 'PUT',
         headers: {
@@ -91,9 +102,30 @@ function toggleSkip (channelId: string): void {
     })
     .then(data => {
         console.log('Response:', data);
+
+        toast.success('Skipped activity', {
+            id: toastId,
+            style: {
+                background: 'rgb(1, 31, 16)',
+                borderWidth: '0.5px',   
+                borderColor: 'rgb(2, 62, 30)',
+                color: 'rgb(93, 244, 169)'
+            }
+        });
     })
     .catch(error => {
         console.error('Error fetching data:', error);
+        
+        toast.warning('Could not skip activity', {
+            id: toastId,
+            style: {
+                background: 'rgb(44, 6, 8)',
+                borderWidth: '0.5px',   
+                borderColor: 'rgb(76, 4, 9)',
+                color: 'rgb(254, 158, 161)'
+            },
+            description: error
+        });
     })
 }
 

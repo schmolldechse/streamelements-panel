@@ -6,43 +6,20 @@ import { toast } from 'sonner';
 
 import './../styles/react-mosaic-component.css';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from '@/components/ui/menubar';
+import { fetchLatest, initIncoming, initMuteEvent, initPauseEvent } from '../service/streamelements';
+import { ActivityPanel } from '@/components/ui/activity_panel';
 
 /*
  * {0} represents the channelId
  * gets current overlays state
  */
-var OVERLAY_API = 'https://api.streamelements.com/kappa/v3/overlays/{0}/action'
-/*
- * {0} represents the channelId
- * gets current activites
- */
-var ACTIVITIES_API = 'https://api.streamelements.com/kappa/v2/activities/{0}'
-/**
- * activities to become from streamelements
- */
-const REQUEST_TYPES = JSON.stringify(['tip', 'subscriber', 'cheer']);
+var OVERLAY_API = 'https://api.streamelements.com/kappa/v3/overlays/{0}/action';
 
-const ELEMENT_MAP: { [viewId: string]: JSX.Element } = {
-    a: <div id='first' className='text-white overflow-y-scroll'>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-        <p>test</p>
-    </div>,
-    b: <div id='second' className='text-white overflow-y-scroll'>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-        <p>lol</p>
-    </div>,
+function createElementMap(activities: any[]): { [viewId: string]: () => JSX.Element } {
+    return {
+        a: () => <ActivityPanel activities={activities} />,
+        b: () => <ActivityPanel activities={activities} />,
+    };
 }
 
 interface PanelProps {
@@ -53,6 +30,9 @@ export default function Panel({ channelId }: PanelProps) {
     const [isPaused, setPaused] = useState(false);
     const [isMuted, setMuted] = useState(false);
     const [isAlertVisible, setAlertVisible] = useState(false);
+    
+    const [activities, setActivities] = useState([]);
+    const [elementMap, setElementMap] = useState(createElementMap(activities));
 
     const togglePause = () => {
         setPaused(!isPaused);
@@ -113,8 +93,10 @@ export default function Panel({ channelId }: PanelProps) {
             },
             duration: 3 * 1000
         });
-        fetchActivities(channelId, 14)
-        .then(() => {
+        fetchLatest(channelId, 60)
+        .then((activities) => {
+            setActivities(activities);         
+            setElementMap(createElementMap(activities));
             toast.success('Fetched activities', {
                 id: activitiesToast,
                 style: {
@@ -141,7 +123,16 @@ export default function Panel({ channelId }: PanelProps) {
 
     useEffect(() => {
         setAlertVisible(isPaused || isMuted);
-    }, [isPaused, isMuted])
+    }, [isPaused, isMuted]);
+
+    useEffect(() => {
+        initPauseEvent(setPaused);
+        initMuteEvent(setMuted);
+        initIncoming((result) => {
+            setActivities(result);
+            setElementMap(createElementMap(result));
+        });
+    }, []);
 
     return (
         <>
@@ -177,7 +168,7 @@ export default function Panel({ channelId }: PanelProps) {
 
             <div className='h-[calc(100vh-50px)] mt-[50px]'>
                 <Mosaic<string>
-                    renderTile={(id) => ELEMENT_MAP[id]}
+                    renderTile={(id, path) => elementMap[id]()}
                     initialValue={{
                         direction: 'column',
                         first: 'a',
@@ -196,8 +187,6 @@ export default function Panel({ channelId }: PanelProps) {
                     </p>
                 </animated.div>
             )}
-
-            <script src='./scripts/dragscroll.ts' defer />
         </div>
         </>
     )
@@ -231,57 +220,9 @@ async function loadState(channelId: string, setPaused: (paused: boolean) => void
     });
 }
 
-async function fetchActivities(channelId: string, days: number) {
-    return new Promise<void>(async (resolve, reject) => {
-        console.log('Start fetching of activites');
-        const started: number = Date.now();
-
-        const current: Date = new Date();
-        current.setDate(current.getDate() + 1);
-
-        const fetched: any[] = [];
-
-        for (let i = 0; i < days; i++) {
-            const before: string = current.toISOString().split('T')[0];
-            current.setDate(current.getDate() - 1);
-            const after: string = current.toISOString().split('T')[0];
-
-            fetch(ACTIVITIES_API.replace('{0}', channelId) + `?after=${after}&before=${before}&limit=150&types=${REQUEST_TYPES}&origin=feed`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    reject('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                data.forEach((document: any) => {
-                    if (document["_id"] && document["type"]) {
-                        fetched.push(document);
-                    }
-                });
-            })
-            .catch(error => {
-                console.log(`Failed to fetch data for ${current}`, error);
-            });
-
-            await new Promise(resolve => setTimeout(resolve, 25));
-        }
-
-        console.log(`Fetched ${fetched.length} activities in the last ${days} (+ today) days`);
-
-        fetched.forEach((_document) => {
-            //
-        })
-
-        const end: number = Date.now();
-        console.log(`Done! Needed ${end - started} ms`);
-
-        resolve();
-    });
+function createContainer(result: any) {
+    const container: any = document.createElement('div');
+    container.className = 'flex flex-col gap-2';
+    container.id = result._id;
+    return container;
 }
