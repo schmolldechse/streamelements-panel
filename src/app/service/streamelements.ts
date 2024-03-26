@@ -165,7 +165,7 @@ function fetchActivity(document: any, result: (result: any) => void) {
     switch (type) {
         case 'follower':
             result(new Follower(
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Followers'),
                 new User(document['data']['username'])
             ));
             break;
@@ -175,7 +175,7 @@ function fetchActivity(document: any, result: (result: any) => void) {
                 document['data']['amount'],
                 document['data']['currency'],
                 document['data']['message'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Tips'),
                 new User(document['data']['username'])
             )); 
             break;
@@ -185,7 +185,7 @@ function fetchActivity(document: any, result: (result: any) => void) {
                 document['data']['tier'],
                 document['data']['message'],
                 document['data']['gifted'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], document['data']['gifted'] as boolean ? 'Subgifts' : 'Subscriptions'),
                 new User(document['data']['username']),
                 new User(document['data']['sender'])
             ));
@@ -194,21 +194,21 @@ function fetchActivity(document: any, result: (result: any) => void) {
             result(new Cheer(
                 document['data']['amount'],
                 document['data']['message'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Cheers'),
                 new User(document['data']['username'])
             ));
             break;
         case 'host':
             result(new Host(
                 document['data']['amount'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Hosts'),
                 new User(document['data']['username'])
             ));
             break;
         case 'raid':
             result(new Raid(
                 document['data']['amount'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id']),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Raids'),
                 new User(document['data']['username'])
             ));
             break;

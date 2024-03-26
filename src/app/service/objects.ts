@@ -12,13 +12,15 @@ export class Activity {
     channel: string;
     type: string;
     id: string;
+    sortingActivityName: string;
 
-    constructor(createdAt: Date, provider: string, channel: string, type: string, id: string) {
+    constructor(createdAt: Date, provider: string, channel: string, type: string, id: string, sortingActivityName: string) {
         this.createdAt = createdAt;
         this.provider = provider;
         this.channel = channel;
         this.type = type;
         this.id = id;
+        this.sortingActivityName = sortingActivityName;
     }
 }
 

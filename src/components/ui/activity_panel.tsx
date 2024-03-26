@@ -5,9 +5,10 @@ import React, { useEffect, useRef } from "react";
 
 interface ActivityPanelProps {
     activities: any[];
+    settings: any;
 }
 
-export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities }: ActivityPanelProps) => {
+export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settings }: ActivityPanelProps) => {
     /**
      * Virtualized list
      */
@@ -23,8 +24,16 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities }: Acti
             }
         }, [rowRef]);
 
+        if (activities[index].activity.sortingActivityName === 'undefined') return;
+
         return (
-            <Activity activity={activities[index]} style={style} index={index} />
+            <>
+            {
+                settings[activities[index].activity.sortingActivityName] 
+                ? <Activity activity={activities[index]} style={style} index={index} />
+                : null
+            }
+            </>
         );
     };
 
