@@ -33,7 +33,7 @@ function createElementMap(activities: any[]): { [viewId: string]: () => JSX.Elem
 
 interface PanelProps {
     channelId: string;
-    setLoggedIn: void;
+    setLoggedIn: any;
 }
 
 export default function Panel({ setLoggedIn, channelId }: PanelProps) {
@@ -188,7 +188,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                     }}>Info</Menubar.Item>
 
                                     <Menubar.Item className='relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-[#1F2937] focus:text-white' onSelect={() => {
-                                        setElementMap(createElementMap({ }));
+                                        setElementMap(createElementMap([]));
                                         fetchData();
                                     }}>Reload Activities & Overlay</Menubar.Item>
 
@@ -237,7 +237,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                                         onCheckedChange={(checked: boolean) => {
                                                             setSplitScreenEnabled(checked);
                                                         }} 
-                                                        onClick={(event) => {
+                                                        onClick={(event: React.MouseEvent) => {
                                                             event.stopPropagation();
                                                         }}
                                                         defaultChecked={splitScreenEnabled}
@@ -255,7 +255,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                                                         onCheckedChange={(checked: boolean) => {
                                                             setSplitScreenHorizontal(checked);
                                                         }} 
-                                                        onClick={(event) => {
+                                                        onClick={(event: React.MouseEvent) => {
                                                             event.stopPropagation();
                                                         }}
                                                         defaultChecked={splitScreenHorizontal}
@@ -311,7 +311,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                         <div className='pt-5 space-y-3'>
                             <p className='text-white font-semibold'>Version: {version}</p>
                             <p className='text-white font-semibold'>Author: {author}</p>
-                            <p className='text-white font-semibold'>Plattform: {parser.getResult().os.name}</p>
+                            <p className='text-white font-semibold'>Plattform: {typeof navigator !== 'undefined' ? 'Web' : 'Client'}</p>
                         </div>
                     </Dialog.Content>
                 </Dialog.Portal>
