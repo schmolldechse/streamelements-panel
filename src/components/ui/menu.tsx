@@ -18,6 +18,7 @@ interface MenuProps {
     splitScreenHorizontal: boolean;
     setSplitScreenHorizontal: Function;
     setDialogOpen: Function;
+    channelId: string;
 }
 
 const Menu: React.FC<MenuProps> = ({ 
@@ -32,7 +33,8 @@ const Menu: React.FC<MenuProps> = ({
     setSplitScreenEnabled,
     splitScreenHorizontal,
     setSplitScreenHorizontal,
-    setDialogOpen
+    setDialogOpen,
+    channelId
 }) => {
 
     return (
@@ -53,7 +55,7 @@ const Menu: React.FC<MenuProps> = ({
                             <Menubar.Item className='relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-[#1F2937] focus:text-white' onSelect={() => {
                                 setActivities([]);
                                 emptyActivities();
-                                setElementMap(createElementMap([], settings));
+                                setElementMap(createElementMap([], settings, channelId));
                                 fetchData();
                             }}>Reload Activities & Overlay</Menubar.Item>
 

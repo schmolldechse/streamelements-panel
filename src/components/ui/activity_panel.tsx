@@ -1,67 +1,56 @@
-import { VariableSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized";
 import Activity from "./activity";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 
 interface ActivityPanelProps {
     activities: any[];
     settings: any;
+    channelId: string;
 }
 
-export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settings }: ActivityPanelProps) => {
-    /**
-     * Virtualized list
-     */
-    const listRef = useRef<List>(null);
-    const rowHeights = useRef<{ [key: number]: number }>({});
- 
-    const Row = ({ index, style }: { index: number, style: React.CSSProperties }) => {
-        const rowRef = useRef<HTMLDivElement>(null);
+export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settings, channelId }: ActivityPanelProps) => {
+    const cache = new CellMeasurerCache({
+        fixedWidth: true,
+        defaultHeight: 80
+    });
 
-        useEffect(() => {
-            if (rowRef.current) {
-                setRowHeight(index, rowRef.current.clientHeight);
-            }
-        }, [rowRef]);
+    const filteredActivities = activities.filter(activity => settings[activity.activity.sortingActivityName]);
 
-        if (activities[index].activity.sortingActivityName === 'undefined') return;
+    const Row = ({ index, key, style, parent }) => {
+        const activity = filteredActivities[index];
+
+        if (activity.activity.sortingActivityName === 'undefined') return;
 
         return (
-            <>
-            {
-                settings[activities[index].activity.sortingActivityName] 
-                ? <Activity activity={activities[index]} style={style} index={index} />
-                : null
-            }
-            </>
+            <CellMeasurer
+                key={key}
+                cache={cache}
+                parent={parent}
+                columnIndex={0}
+                rowIndex={index}
+            >
+                {({ measure }) => (
+                    <div ref={measure} style={style}>
+                        <Activity activity={activity} index={index} channelId={channelId} />
+                    </div>
+                )}
+            </CellMeasurer>
         );
     };
-
-    function getRowHeight(index: number): number {
-        return rowHeights.current[index] + 8 || 80;
-    }
-
-    function setRowHeight(index: number, size: number): void {
-        if (listRef.current) {
-            //listRef.current.resetAfterIndex(0); //huh?
-            rowHeights.current = { ...rowHeights.current, [index]: size };
-        }
-    }
 
     return (
         <AutoSizer>
             {({ height, width }) => (
                 <List
-                    ref={listRef}
                     height={height}
                     width={width}
-                    itemCount={activities.length}
-                    itemSize={getRowHeight}
-                    overscanCount={2}
+                    deferredMeasurementCache={cache}
+                    rowHeight={({ index }) => cache.rowHeight({ index })}
+                    rowRenderer={Row}
+                    rowCount={filteredActivities.length}
+                    overscanCount={3}
                     className="activitypanel h-auto overflow-y-scroll"
-                >
-                    {Row}
-                </List>
+                />
             )}
         </AutoSizer>
     );

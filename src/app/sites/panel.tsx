@@ -9,7 +9,9 @@ import { fetchLatest, initIncoming, initMuteEvent, initPauseEvent } from '../ser
 import { ActivityPanel } from '@/components/ui/activity_panel';
 import * as Dialog from '@radix-ui/react-dialog';
 
-import { version, author } from './../../../package.json';
+import Package from './../../../package.json';
+const { version, author } = Package;
+
 import Menu from '@/components/ui/menu';
 
 /*
@@ -18,10 +20,10 @@ import Menu from '@/components/ui/menu';
  */
 var OVERLAY_API = 'https://api.streamelements.com/kappa/v3/overlays/{0}/action';
 
-function createElementMap(activities: any[], settings: any): { [viewId: string]: () => JSX.Element } {
+function createElementMap(activities: any[], settings: any, channelId: string): { [viewId: string]: () => JSX.Element } {
     return {
-        a: () => <ActivityPanel activities={activities} settings={settings.a} />,
-        b: () => <ActivityPanel activities={activities} settings={settings.b} />,
+        a: () => <ActivityPanel activities={activities} settings={settings.a} channelId={channelId} />,
+        b: () => <ActivityPanel activities={activities} settings={settings.b} channelId={channelId} />,
     };
 }
 
@@ -83,7 +85,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
      * Activity Panel rendering
      */
     const [activities, setActivities] = useState([]);
-    const [elementMap, setElementMap] = useState(createElementMap(activities, settings));
+    const [elementMap, setElementMap] = useState(createElementMap(activities, settings, channelId));
 
     /**
      * Dialog State
@@ -107,7 +109,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
     };
 
     useEffect(() => {
-        setElementMap(createElementMap(activities, settings));
+        setElementMap(createElementMap(activities, settings, channelId));
     }, [settings]);
 
     /**
@@ -170,7 +172,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
         fetchLatest(channelId, 60)
         .then((activities) => {
             setActivities(activities);         
-            setElementMap(createElementMap(activities, settings));
+            setElementMap(createElementMap(activities, settings, channelId));
             toast.success('Fetched activities', {
                 id: activitiesToast,
                 style: {
@@ -214,7 +216,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
         initMuteEvent(setMuted);
         initIncoming((result) => {
             setActivities(result);
-            setElementMap(createElementMap(result, settings));
+            setElementMap(createElementMap(result, settings, channelId));
         });
     }, []);
 
@@ -241,6 +243,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                     splitScreenHorizontal={splitScreenHorizontal}
                     setSplitScreenHorizontal={setSplitScreenHorizontal}
                     setDialogOpen={setDialogOpen}
+                    channelId={channelId}
                 />
             </header>
 
@@ -256,7 +259,7 @@ export default function Panel({ setLoggedIn, channelId }: PanelProps) {
                         }} 
                     />
                 ) : (
-                    <ActivityPanel activities={activities} settings={settings.b} />
+                    <ActivityPanel activities={activities} settings={settings.b} channelId={channelId} />
                 )}
             </div>
 

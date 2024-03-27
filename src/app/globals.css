@@ -119,6 +119,10 @@ body {
   box-shadow: none !important;
 }
 
+.activitypanel {
+  row-gap: 4px;
+}
+
 .activitypanel::-webkit-scrollbar {
   width: 10px;
 }
