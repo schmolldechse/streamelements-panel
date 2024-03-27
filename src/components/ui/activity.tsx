@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
 import Linkify from 'react-linkify';
+
 import { Button } from './button';
 import { toast } from 'sonner';
 
@@ -24,215 +24,216 @@ const typeSvg = {
     Followers: '<svg fill="#CA3433" width="18px" height="18px" viewBox="0 0 15 15"><path d="M13.91 6.75c-1.17 2.25-4.3 5.31-6.07 6.94a.5.5 0 0 1-.67 0C5.39 12.06 2.26 9 1.09 6.75-1.48 1.8 5-1.5 7.5 3.45c2.5-4.95 8.98-1.65 6.41 3.3"/></svg>',
     Hosts: '<svg fill="white" width="20px" height="20px" viewBox="0 0 100 100" ><path d="M80 71.2V74c0 3.3-2.7 6-6 6H26c-3.3 0-6-2.7-6-6v-2.8c0-7.3 8.5-11.7 16.5-15.2.3-.1.5-.2.8-.4.6-.3 1.3-.3 1.9.1C42.4 57.8 46.1 59 50 59s7.6-1.2 10.8-3.2c.6-.4 1.3-.4 1.9-.1.3.1.5.2.8.4 8 3.4 16.5 7.8 16.5 15.1"/><ellipse cx="50" cy="36.5" rx="14.9" ry="16.5"/></svg>',
     Raids: '<svg fill="#4682B4" width="18px" height="18px" viewBox="0 0 24 24"><path d="M18 11.74a1 1 0 0 0-.52-.63l-3.39-1.68.91-6.29a1 1 0 0 0-1.78-.75l-7 9a1 1 0 0 0-.18.87 1.05 1.05 0 0 0 .6.67l4.27 1.71-.91 6.22a1 1 0 0 0 .63 1.07.9.9 0 0 0 .37.07 1 1 0 0 0 .83-.45l6-9a1 1 0 0 0 .17-.81"/></svg>'
-}
-
-const typeColor = {
-    Tips: '#46DCB3',
-    Subscriptions: '#F5AF13',
-    Subgifts: '#F5AF13',
-    Cheers: '#A05AC3',
-    Followers: '#CA3433',
-    Hosts: 'white',
-    Raids: '#4682B4'
-}
-
-const typeAmount = (activity: any) => ({
-    Tips: `${activity.currency}`,
-    Subscriptions: ' Monat' + (activity.amount > 1 ? 'e' : ''),
-    Subgifts: 'x',
-    Cheers: ' Bits',
-    Followers: '', // does not have an amount field
-    Hosts: ' Zuschauer',
-    Raids: ' Zuschauer'
-});
-
-const formatTier = (tier: string) => {
-    switch (tier) {
-        case '1000': return 'Tier 1';
-        case '2000': return 'Tier 2';
-        case '3000': return 'Tier 3';
-        case 'prime': return 'Prime';
-        default: return 'NaN';
     }
-};
 
-const Activity = ({ activity, index, channelId }: ActivityProp) => {
-    /**
-     * activity formatting
-     */
-    const svg: string = typeSvg[activity.activity.sortingActivityName as keyof typeof typeSvg];
-    const color: string = typeColor[activity.activity.sortingActivityName as keyof typeof typeColor];
-    const amount: string = typeAmount(activity)[activity.activity.sortingActivityName as keyof typeof typeAmount];
+    const typeColor = {
+        Tips: '#46DCB3',
+        Subscriptions: '#F5AF13',
+        Subgifts: '#F5AF13',
+        Cheers: '#A05AC3',
+        Followers: '#CA3433',
+        Hosts: 'white',
+        Raids: '#4682B4'
+    }
 
-    const formatCurrency = (amount: number, currency: string) => {
-        return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currency, minimumSignificantDigits: 1 }).format(amount);
-    };
+    const typeAmount = (activity: any) => ({
+        Tips: `${activity.currency}`,
+        Subscriptions: ' Monat' + (activity.amount > 1 ? 'e' : ''),
+        Subgifts: 'x',
+        Cheers: ' Bits',
+        Followers: '', // does not have an amount field
+        Hosts: ' Zuschauer',
+        Raids: ' Zuschauer'
+    });
 
-    /**
-     * handle clicking on links because of electron
-     * @param url 
-     */
-    const handleLinkClick = (url: string) => {
-        if (typeof window !== 'undefined' && (window as any).api && (window as any).api.openLink) {
-            (window as any).api.openLink(url);
-        } else {
-            window.open(url, '_blank');
+    const formatTier = (tier: string) => {
+        switch (tier) {
+            case '1000': return 'Tier 1';
+            case '2000': return 'Tier 2';
+            case '3000': return 'Tier 3';
+            case 'prime': return 'Prime';
+            default: return 'NaN';
         }
     };
 
-    /**
-     * updating time every 1s
-     */
-    const [now, setNow] = useState(new Date());
+    const Activity = ({ activity, index, channelId }: ActivityProp) => {
+        /**
+         * activity formatting
+         */
+        const svg: string = typeSvg[activity.activity.sortingActivityName as keyof typeof typeSvg];
+        const color: string = typeColor[activity.activity.sortingActivityName as keyof typeof typeColor];
+        const amount: string = typeAmount(activity)[activity.activity.sortingActivityName as keyof typeof typeAmount];
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setNow(new Date());
-        }, 1000);
-        
-        return () => clearInterval(timer);
-    }, []);
+        const formatCurrency = (amount: number, currency: string) => {
+            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currency, minimumSignificantDigits: 1 }).format(amount);
+        };
 
-    const calculateTimeDifference = () => {
-        if (!(activity.activity.createdAt instanceof Date)) return 'NaN';
-
-        const diff: number = Math.floor((now.getTime() - activity.activity.createdAt) / 1000);
-
-        if (diff < 60) {
-            return `${diff} s`;
-        } else if (diff < 3600) {
-            return `${Math.floor(diff / 60)} m`;
-        } else if (diff < 86400) {
-            return `${Math.floor(diff / 3600)} h`;
-        } else {
-            return `${Math.floor(diff / 86400)} t`;
-        }
-    };
-
-    /**
-     * manage hovering above the time
-     */
-    const [isHovering, setHovering] = useState(false);
-
-    /**
-     * replaying activity
-     */
-    const replayActivity = () => {
-        const toastId = toast.loading('Replaying activity...', {
-            style: {
-                background: 'black',
-                borderWidth: '0.5px',   
-                borderColor: 'gray',
-                color: 'white'
-            },
-            duration: 3 * 1000
-        });
-
-        fetch(API_URL.replace('{0}', channelId).replace('{1}', activity.activity.id), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
+        /**
+         * handle clicking on links because of electron
+         * @param url 
+         */
+        const handleLinkClick = (url: string) => {
+            if (typeof window !== 'undefined' && (window as any).api && (window as any).api.openLink) {
+                (window as any).api.openLink(url);
+            } else {
+                window.open(url, '_blank');
             }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response:', data);
-    
-            toast.success('Replayed activity', {
-                id: toastId,
-                style: {
-                    background: 'rgb(1, 31, 16)',
-                    borderWidth: '0.5px',   
-                    borderColor: 'rgb(2, 62, 30)',
-                    color: 'rgb(93, 244, 169)'
-                }
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
+        };
+
+        /**
+         * updating time every 1s
+         */
+        const [now, setNow] = useState(new Date());
+
+        useEffect(() => {
+            const timer = setInterval(() => {
+                setNow(new Date());
+            }, 1000);
             
-            toast.warning('Could not replay activity', {
-                id: toastId,
+            return () => clearInterval(timer);
+        }, []);
+
+        const calculateTimeDifference = () => {
+            if (!(activity.activity.createdAt instanceof Date)) return 'NaN';
+
+            const diff: number = Math.floor((now.getTime() - activity.activity.createdAt) / 1000);
+
+            if (diff < 60) {
+                return `${diff} s`;
+            } else if (diff < 3600) {
+                return `${Math.floor(diff / 60)} m`;
+            } else if (diff < 86400) {
+                return `${Math.floor(diff / 3600)} h`;
+            } else {
+                return `${Math.floor(diff / 86400)} t`;
+            }
+        };
+
+        /**
+         * manage hovering above the time
+         */
+        const [isHovering, setHovering] = useState(false);
+
+        /**
+         * replaying activity
+         */
+        const replayActivity = () => {
+            const toastId = toast.loading('Replaying activity...', {
                 style: {
-                    background: 'rgb(44, 6, 8)',
+                    background: 'black',
                     borderWidth: '0.5px',   
-                    borderColor: 'rgb(76, 4, 9)',
-                    color: 'rgb(254, 158, 161)'
+                    borderColor: 'gray',
+                    color: 'white'
                 },
-                description: error
+                duration: 3 * 1000
             });
-        })
-    }
 
-    return (
-            <>
-            <div 
-                className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2'
-                onMouseEnter={() => setHovering(true)}
-                onMouseLeave={() => setHovering(false)}
-            >
-                <div className='flex gap-3 items-center'>
-                    <div dangerouslySetInnerHTML={{__html: svg || '' }} />
-                    <p style={{ color: color }} className='font-bold'>
-                        {activity.gifted ? activity.sender.username : activity.user.username}
-                    </p>
+            fetch(API_URL.replace('{0}', channelId).replace('{1}', activity.activity.id), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response:', data);
+        
+                toast.success('Replayed activity', {
+                    id: toastId,
+                    style: {
+                        background: 'rgb(1, 31, 16)',
+                        borderWidth: '0.5px',   
+                        borderColor: 'rgb(2, 62, 30)',
+                        color: 'rgb(93, 244, 169)'
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                
+                toast.warning('Could not replay activity', {
+                    id: toastId,
+                    style: {
+                        background: 'rgb(44, 6, 8)',
+                        borderWidth: '0.5px',   
+                        borderColor: 'rgb(76, 4, 9)',
+                        color: 'rgb(254, 158, 161)'
+                    },
+                    description: error
+                });
+            })
+        }
 
-                    {activity.amount ? (
-                        <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
-                            <p className='text-white'>
-                                {activity.activity.sortingActivityName === 'Tips' ? (
-                                    formatCurrency(activity.amount, activity.currency)
-                                ) : (
-                                    activity.amount + amount
-                                )}
-                            </p>
+        return (
+                <>
+                
+                <div 
+                    className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2'
+                    onMouseEnter={() => setHovering(true)}
+                    onMouseLeave={() => setHovering(false)}
+                >
+                    <div className='flex gap-3 items-center'>
+                        <div dangerouslySetInnerHTML={{__html: svg || '' }} />
+                        <p style={{ color: color }} className='font-bold'>
+                            {activity.gifted ? activity.sender.username : activity.user.username}
+                        </p>
+
+                        {activity.amount ? (
+                            <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
+                                <p className='text-white'>
+                                    {activity.activity.sortingActivityName === 'Tips' ? (
+                                        formatCurrency(activity.amount, activity.currency)
+                                    ) : (
+                                        activity.amount + amount
+                                    )}
+                                </p>
+                            </div>
+                        ) : null}
+
+                        {activity.tier ? (
+                            <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
+                                <p className='text-white'>
+                                    {formatTier(activity.tier)}
+                                </p>
+                            </div>
+                        ) : null}
+                    </div> 
+
+                    {activity.message ? (
+                        <div style={{ userSelect: 'text' }} className='overflow-hidden'>
+                            <Linkify componentDecorator={(decoratedHref: any, decoratedText: any, key: any) => (
+                                <a rel='noreferrer' target="_blank" onClick={() => handleLinkClick(decoratedHref)} key={key} className="color_purple hover:cursor-pointer">
+                                    {decoratedText}
+                                </a>
+                            )}>
+                                <p className='text-gray-200'>{activity.message}</p>
+                            </Linkify>                        
                         </div>
                     ) : null}
 
-                    {activity.tier ? (
-                        <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
-                            <p className='text-white'>
-                                {formatTier(activity.tier)}
-                            </p>
-                        </div>
-                    ) : null}
-                </div> 
-
-                {activity.message ? (
-                    <div style={{ userSelect: 'text' }} className='overflow-hidden'>
-                        <Linkify componentDecorator={(decoratedHref: any, decoratedText: any, key: any) => (
-                            <a rel='noreferrer' target="_blank" onClick={() => handleLinkClick(decoratedHref)} key={key} className="color_purple hover:cursor-pointer">
-                                {decoratedText}
-                            </a>
-                        )}>
-                            <p className='text-gray-200'>{activity.message}</p>
-                        </Linkify>
+                    <div className='absolute right-6 top-1/2 transform -translate-y-1/2'>
+                        {isHovering ? (
+                            <Button onClick={replayActivity}>
+                                <svg width="14px" height="14px" viewBox="-1.5 0 19 19">
+                                    <g fill="none" fillRule="evenodd">
+                                        <path d="M8 4a7 7 0 1 1-7 7" stroke="#DADBDD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="m6.826 7.886-5.13-3.581c-.216-.126-.26-.365-.098-.534a.5.5 0 0 1 .098-.076l5.13-3.58c.324-.19.784-.139 1.027.114A.5.5 0 0 1 8 .571v6.858C8 7.744 7.672 8 7.266 8a.9.9 0 0 1-.44-.114" fill="#DADBDD"/>
+                                    </g>
+                                </svg>
+                            </Button>
+                        ) : (
+                            <p className='text-gray-400'>{calculateTimeDifference()}</p>
+                        )}
                     </div>
-                ) : null}
-
-                <div className='absolute right-6 top-1/2 transform -translate-y-1/2'>
-                    {isHovering ? (
-                        <Button onClick={replayActivity}>
-                            <svg width="14px" height="14px" viewBox="-1.5 0 19 19">
-                                <g fill="none" fillRule="evenodd">
-                                    <path d="M8 4a7 7 0 1 1-7 7" stroke="#DADBDD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="m6.826 7.886-5.13-3.581c-.216-.126-.26-.365-.098-.534a.5.5 0 0 1 .098-.076l5.13-3.58c.324-.19.784-.139 1.027.114A.5.5 0 0 1 8 .571v6.858C8 7.744 7.672 8 7.266 8a.9.9 0 0 1-.44-.114" fill="#DADBDD"/>
-                                </g>
-                            </svg>
-                        </Button>
-                    ) : (
-                        <p className='text-gray-400'>{calculateTimeDifference(activity.activity.createdAt)}</p>
-                    )}
                 </div>
-            </div>
-            </>
-    );
-};
+                </>
+        );
+    };
 
-export default Activity;
+    export default Activity;

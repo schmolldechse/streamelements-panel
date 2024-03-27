@@ -1,6 +1,7 @@
 import { AutoSizer, List, CellMeasurer, CellMeasurerCache } from "react-virtualized";
 import Activity from "./activity";
 import React from "react";
+import { MeasuredCellParent } from "react-virtualized/dist/es/CellMeasurer";
 
 interface ActivityPanelProps {
     activities: any[];
@@ -16,7 +17,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settin
 
     const filteredActivities = activities.filter(activity => settings[activity.activity.sortingActivityName]);
 
-    const Row = ({ index, key, style, parent }) => {
+    const Row = ({ index, key, style, parent }: { index: number, key: string, style: React.CSSProperties, parent: React.Component }) => {
         const activity = filteredActivities[index];
 
         if (activity.activity.sortingActivityName === 'undefined') return;
@@ -25,7 +26,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settin
             <CellMeasurer
                 key={key}
                 cache={cache}
-                parent={parent}
+                parent={parent as MeasuredCellParent}
                 columnIndex={0}
                 rowIndex={index}
             >
