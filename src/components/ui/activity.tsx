@@ -52,7 +52,7 @@ const typeSvg = {
             case '2000': return 'Tier 2';
             case '3000': return 'Tier 3';
             case 'prime': return 'Prime';
-            default: return 'NaN';
+            default: return 'N/A';
         }
     };
 
@@ -83,7 +83,7 @@ const typeSvg = {
         /**
          * updating time every 1s
          */
-        const [now, setNow] = useState(new Date());
+        const [now, setNow] = useState<Date>(new Date());
 
         useEffect(() => {
             const timer = setInterval(() => {
@@ -94,18 +94,17 @@ const typeSvg = {
         }, []);
 
         const calculateTimeDifference = () => {
-            if (!(activity.activity.createdAt instanceof Date)) return 'NaN';
+            const createdDate = new Date(activity.activity.createdAt);
+            const diffInSeconds: number = Math.floor((now.getTime() - createdDate.getTime()) / 1000);
 
-            const diff: number = Math.floor((now.getTime() - activity.activity.createdAt) / 1000);
-
-            if (diff < 60) {
-                return `${diff} s`;
-            } else if (diff < 3600) {
-                return `${Math.floor(diff / 60)} m`;
-            } else if (diff < 86400) {
-                return `${Math.floor(diff / 3600)} h`;
+            if (diffInSeconds < 60) {
+                return `${diffInSeconds} s`;
+            } else if (diffInSeconds < 3600) {
+                return `${Math.floor(diffInSeconds / 60)} m`;
+            } else if (diffInSeconds < 86400) {
+                return `${Math.floor(diffInSeconds / 3600)} h`;
             } else {
-                return `${Math.floor(diff / 86400)} t`;
+                return `${Math.floor(diffInSeconds / 86400)} t`;
             }
         };
 
