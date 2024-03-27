@@ -38,12 +38,12 @@ const typeSvg = {
 
     const typeAmount = (activity: any) => ({
         Tips: `${activity.currency}`,
-        Subscriptions: ' Monat' + (activity.amount > 1 ? 'e' : ''),
+        Subscriptions: ' Month' + (activity.amount > 1 ? 's' : ''),
         Subgifts: 'x',
         Cheers: ' Bits',
         Followers: '', // does not have an amount field
-        Hosts: ' Zuschauer',
-        Raids: ' Zuschauer'
+        Hosts: ' Viewer',
+        Raids: ' Viewer'
     });
 
     const formatTier = (tier: string) => {
@@ -104,7 +104,7 @@ const typeSvg = {
             } else if (diffInSeconds < 86400) {
                 return `${Math.floor(diffInSeconds / 3600)} h`;
             } else {
-                return `${Math.floor(diffInSeconds / 86400)} t`;
+                return `${Math.floor(diffInSeconds / 86400)} d`;
             }
         };
 
