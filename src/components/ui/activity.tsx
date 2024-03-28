@@ -173,10 +173,12 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
         <>
 
             <div
-                className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2'
+                className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2 overflow-hidden relative'
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
             >
+                <div className={`w-1 h-full absolute left-0 top-0 transition-all duration-500 block ${isHovering ? 'opacity-100' : 'opacity-25'}`} style={{ background: `${color}` }}></div>
+
                 <div className='flex gap-3 items-center'>
                     <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
                     <p style={{ color: color }} className='font-bold'>
@@ -193,7 +195,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
                                 {activity.activity.sortingActivityName === 'Tips' ? (
                                     formatCurrency(activity.amount, activity.currency)
                                 ) : (
-                                    activity.amount + amount
+                                    Intl.NumberFormat('de-DE').format(activity.amount) + amount
                                 )}
                             </p>
                         </div>
