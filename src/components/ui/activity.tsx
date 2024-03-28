@@ -65,7 +65,7 @@ const typeSvg = {
         const amount: string = typeAmount(activity)[activity.activity.sortingActivityName as keyof typeof typeAmount];
 
         const formatCurrency = (amount: number, currency: string) => {
-            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currency, minimumSignificantDigits: 1 }).format(amount);
+            return new Intl.NumberFormat('de-DE', { style: 'currency', currency: currency, minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2 }).format(amount);
         };
 
         /**
