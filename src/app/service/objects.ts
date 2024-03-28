@@ -48,10 +48,10 @@ export class Subscription {
     message: string;
     gifted: boolean;
     activity: Activity;
-    user: User;
-    sender: User | null;
+    user: User | undefined;
+    sender: User | undefined;
 
-    constructor(amount: number, tier: string, message: string, gifted: boolean, activity: Activity, user: User, sender: User | null) {
+    constructor(amount: number, tier: string, message: string, gifted: boolean, activity: Activity, user: User | undefined, sender: User | undefined) {
         this.amount = amount;
         this.tier = tier;
         this.message = message;

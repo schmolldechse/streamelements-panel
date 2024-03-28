@@ -180,14 +180,29 @@ function fetchActivity(document: any, result: (result: any) => void) {
             )); 
             break;
         case 'subscriber':
+            if (document['activityGroup']) {
+                console.log('Skipping subscriber due to being communityGiftPurchase');
+                return;
+            }
             result(new Subscription(
                 document['data']['amount'],
                 document['data']['tier'],
                 document['data']['message'],
                 document['data']['gifted'],
-                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], document['data']['gifted'] as boolean ? 'Subgifts' : 'Subscriptions'),
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], document['data']['gifted'] ? 'Subgifts' : 'Subscriptions'),
                 new User(document['data']['username']),
-                new User(document['data']['sender'])
+                document['data']['sender'] ? new User(document['data']['sender']) : undefined
+            ));
+            break;
+        case 'communityGiftPurchase': 
+            result(new Subscription(
+                document['data']['amount'],
+                document['data']['tier'],
+                document['data']['message'],
+                true,
+                new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Subgifts'),
+                undefined,
+                new User(document['data']['username'])
             ));
             break;
         case 'cheer':
