@@ -39,7 +39,7 @@ const typeColor = {
 const typeAmount = (activity: any) => ({
     Tips: `${activity.currency}`,
     Subscriptions: ' Month' + (activity.amount > 1 ? 's' : ''),
-    Subgifts: 'x',
+    Subgifts: ' Subgifts',
     Cheers: ' Bits',
     Followers: '', // does not have an amount field
     Hosts: ' Viewer',
