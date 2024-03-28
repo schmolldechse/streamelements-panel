@@ -39,7 +39,7 @@ const Menu: React.FC<MenuProps> = ({
 
     return (
         <>
-        <Menubar.Root className='flex bg-color_darkblue text-white p-[3px] rounded-md border-color_gray border-2 h-9'>
+        <Menubar.Root className='flex bg-color_darkblue text-white p-[3px] rounded-md border-color_gray border-2 h-9 outline-none'>
             <Menubar.Menu>
                 <Menubar.Trigger className='py-2 px-3 outline-none select-none font-bold leading-none rounded text-[14px] flex items-center justify-between gap-[2px] data-[highlighted]:bg-[#1F2937] data-[state=open]:bg-[#1F2937]'>Client</Menubar.Trigger>
                 <Menubar.Portal>

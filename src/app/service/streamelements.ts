@@ -163,7 +163,7 @@ function fetchActivity(document: any, result: (result: any) => void) {
     }
 
     switch (type) {
-        case 'follower':
+        case 'follow':
             result(new Follower(
                 new Activity(document['createdAt'], document['provider'], document['channel'], type, document['_id'], 'Followers'),
                 new User(document['data']['username'])
