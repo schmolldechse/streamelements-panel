@@ -49,7 +49,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settin
                     rowHeight={({ index }) => cache.rowHeight({ index })}
                     rowRenderer={Row}
                     rowCount={filteredActivities.length}
-                    overscanCount={3}
+                    overscanCount={2}
                     className="activitypanel h-auto overflow-y-scroll"
                 />
             )}
