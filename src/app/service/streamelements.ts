@@ -149,6 +149,8 @@ async function fetchLatest(channelId: string, days: number) {
         const end: number = Date.now();
         console.log(`Done! Needed ${end - started} ms`);
 
+        fetchedActivities.sort((a, b) => new Date(b.activity.createdAt).getTime() - new Date(a.activity.createdAt).getTime());
+
         resolve(fetchedActivities);
     });
 }
