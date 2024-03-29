@@ -251,7 +251,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
                             className='text-white select-none rounded-sm px-2 py-1.5 outline-none focus:bg-[#1F2937] focus:text-white data-[disabled]:opacity-40'
                             onSelect={() => {
                                 navigator.clipboard.writeText(activity.message).then(() => {
-                                    toast('Pasted to clipboard', {
+                                    toast('Copied to clipboard', {
                                         style: {
                                             background: 'rgb(1, 31, 16)',
                                             borderWidth: '0.5px',
@@ -285,7 +285,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
                                 }
 
                                 navigator.clipboard.writeText(match[0]).then(() => {
-                                    toast('Pasted to clipboard', {
+                                    toast('Copied to clipboard', {
                                         style: {
                                             background: 'rgb(1, 31, 16)',
                                             borderWidth: '0.5px',
