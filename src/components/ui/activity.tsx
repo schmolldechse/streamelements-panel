@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Linkify from 'react-linkify';
 
 import { Button } from './button';
@@ -97,7 +97,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
         return () => clearInterval(timer);
     }, []);
 
-    const calculateTimeDifference = () => {
+    const calculateTimeDifference = useMemo(() => {
         const createdDate = new Date(activity.activity.createdAt);
         const diffInSeconds: number = Math.floor((now.getTime() - createdDate.getTime()) / 1000);
 
@@ -110,7 +110,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
         } else {
             return `${Math.floor(diffInSeconds / 86400)} d`;
         }
-    };
+    }, [now, activity.activity.createdAt]);
 
     /**
      * manage hovering above the time
@@ -239,7 +239,7 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
                                     </svg>
                                 </Button>
                             ) : (
-                                <p className='text-gray-400'>{calculateTimeDifference()}</p>
+                                <p className='text-gray-400'>{calculateTimeDifference}</p>
                             )}
                         </div>
                     </div>

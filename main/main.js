@@ -12,7 +12,8 @@ const createWindow = () => {
         height: 950,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js')
-        }
+        },
+        icon: path.join(__dirname, './../src/app/favicon.ico'),
     });
 
     if (app.isPackaged) {

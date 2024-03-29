@@ -2,10 +2,10 @@ appId: "io.github.schmolldechse.streamelements-panel"
 productName: "StreamElements Panel"
 win:
   target: ["dir", "portable", "zip"]
-  icon: "resources/icon.ico"
+  icon: "./src/app/favicon.ico"
 linux: 
   target: ["dir", "appimage", "zip"]
-  icon: "resources/icon.png"
+  icon: "./src/app/favicon.ico"
 mac:
   target: ["dir", "dmg", "zip"]
-  icon: "resources/icon.icns"
+  icon: "./src/app/favicon.ico"

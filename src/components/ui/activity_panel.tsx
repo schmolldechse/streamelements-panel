@@ -20,7 +20,7 @@ export const ActivityPanel: React.FC<ActivityPanelProps> = ({ activities, settin
     const Row = ({ index, key, style, parent }: { index: number, key: string, style: React.CSSProperties, parent: React.Component }) => {
         const activity = filteredActivities[index];
 
-        if (activity.activity.sortingActivityName === 'undefined') return;
+        if (activity.activity.sortingActivityName === undefined) return;
 
         return (
             <CellMeasurer
