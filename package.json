@@ -13,6 +13,7 @@
     "e_build": "next build && electron-builder"
   },
   "dependencies": {
+    "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-menubar": "^1.0.4",

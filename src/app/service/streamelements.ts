@@ -130,7 +130,7 @@ async function fetchLatest(channelId: string, days: number) {
                 console.log(`Failed to fetch data for ${current}`, error);
             });
 
-            await new Promise(resolve => setTimeout(resolve, 25));
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         console.log(`Received ${fetched.length} activities in the last ${days} (+ today) days`);

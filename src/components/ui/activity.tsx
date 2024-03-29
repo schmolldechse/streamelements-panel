@@ -4,6 +4,8 @@ import Linkify from 'react-linkify';
 import { Button } from './button';
 import { toast } from 'sonner';
 
+import * as ContextMenu from '@radix-ui/react-context-menu';
+
 interface ActivityProp {
     activity: any;
     index: number;
@@ -45,6 +47,8 @@ const typeAmount = (activity: any) => ({
     Hosts: ' Viewer',
     Raids: ' Viewer'
 });
+
+const urlRegex = /(https?:\/\/[^\s]+)/g;
 
 const formatTier = (tier: string) => {
     switch (tier) {
@@ -134,108 +138,181 @@ const Activity = ({ activity, index, channelId }: ActivityProp) => {
                 'Authorization': 'Bearer ' + localStorage.getItem('token')
             }
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response:', data);
-
-            toast.success('Replayed activity', {
-                id: toastId,
-                style: {
-                    background: 'rgb(1, 31, 16)',
-                    borderWidth: '0.5px',
-                    borderColor: 'rgb(2, 62, 30)',
-                    color: 'rgb(93, 244, 169)'
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response:', data);
 
-            toast.warning('Could not replay activity', {
-                id: toastId,
-                style: {
-                    background: 'rgb(44, 6, 8)',
-                    borderWidth: '0.5px',
-                    borderColor: 'rgb(76, 4, 9)',
-                    color: 'rgb(254, 158, 161)'
-                },
-                description: error
-            });
-        })
+                toast.success('Replayed activity', {
+                    id: toastId,
+                    style: {
+                        background: 'rgb(1, 31, 16)',
+                        borderWidth: '0.5px',
+                        borderColor: 'rgb(2, 62, 30)',
+                        color: 'rgb(93, 244, 169)'
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+
+                toast.warning('Could not replay activity', {
+                    id: toastId,
+                    style: {
+                        background: 'rgb(44, 6, 8)',
+                        borderWidth: '0.5px',
+                        borderColor: 'rgb(76, 4, 9)',
+                        color: 'rgb(254, 158, 161)'
+                    },
+                    description: error
+                });
+            })
     }
 
     return (
         <>
-        <div
-            className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2 overflow-hidden relative'
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
-        >
-            <div className={`w-1 h-full absolute left-0 top-0 transition-all duration-500 block ${isHovering ? 'opacity-100' : 'opacity-25'}`} style={{ background: `${color}` }}></div>
+            <ContextMenu.Root>
+                <ContextMenu.Trigger>
 
-            <div className='flex gap-3 items-center'>
-                <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
-                <p style={{ color: color }} className='font-bold'>
-                    {activity.gifted ? (
-                        activity.sender.username
-                    ) : (
-                        activity.user.username
-                    )}
-                </p>
+                    <div
+                        className='ml-[5px] mt-1 mr-1.5 p-5 border border-color_gray rounded-lg px-3 py-2 overflow-hidden relative'
+                        onMouseEnter={() => setHovering(true)}
+                        onMouseLeave={() => setHovering(false)}
+                    >
+                        <div className={`w-1 h-full absolute left-0 top-0 transition-all duration-500 block ${isHovering ? 'opacity-100' : 'opacity-25'}`} style={{ background: `${color}` }}></div>
 
-                {activity.amount ? (
-                    <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
-                        <p className='text-white'>
-                            {activity.activity.sortingActivityName === 'Tips' ? (
-                                activity.currency ? formatCurrency(activity.amount, activity.currency) : activity.amount + ' N/A'
+                        <div className='flex gap-3 items-center'>
+                            <div dangerouslySetInnerHTML={{ __html: svg || '' }} />
+                            <p style={{ color: color }} className='font-bold'>
+                                {activity.gifted ? (
+                                    activity.sender.username
+                                ) : (
+                                    activity.user.username
+                                )}
+                            </p>
+
+                            {activity.amount ? (
+                                <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
+                                    <p className='text-white'>
+                                        {activity.activity.sortingActivityName === 'Tips' ? (
+                                            activity.currency ? formatCurrency(activity.amount, activity.currency) : activity.amount + ' N/A'
+                                        ) : (
+                                            Intl.NumberFormat('de-DE').format(activity.amount) + amount
+                                        )}
+                                    </p>
+                                </div>
+                            ) : null}
+
+                            {activity.tier ? (
+                                <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
+                                    <p className='text-white'>
+                                        {formatTier(activity.tier)}
+                                    </p>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        {activity.message ? (
+                            <div style={{ userSelect: 'text' }} className='overflow-hidden'>
+                                <Linkify componentDecorator={(decoratedHref: any, decoratedText: any, key: any) => (
+                                    <a rel='noreferrer' target="_blank" onClick={() => handleLinkClick(decoratedHref)} key={key} className="color_purple hover:cursor-pointer">
+                                        {decoratedText}
+                                    </a>
+                                )}>
+                                    <p className='text-gray-200'>{activity.message}</p>
+                                </Linkify>
+                            </div>
+                        ) : null}
+
+                        <div className='absolute right-6 top-1/2 transform -translate-y-1/2'>
+                            {isHovering ? (
+                                <Button onClick={replayActivity}>
+                                    <svg width="14px" height="14px" viewBox="-1.5 0 19 19">
+                                        <g fill="none" fillRule="evenodd">
+                                            <path d="M8 4a7 7 0 1 1-7 7" stroke="#DADBDD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            <path d="m6.826 7.886-5.13-3.581c-.216-.126-.26-.365-.098-.534a.5.5 0 0 1 .098-.076l5.13-3.58c.324-.19.784-.139 1.027.114A.5.5 0 0 1 8 .571v6.858C8 7.744 7.672 8 7.266 8a.9.9 0 0 1-.44-.114" fill="#DADBDD" />
+                                        </g>
+                                    </svg>
+                                </Button>
                             ) : (
-                                Intl.NumberFormat('de-DE').format(activity.amount) + amount
+                                <p className='text-gray-400'>{calculateTimeDifference()}</p>
                             )}
-                        </p>
+                        </div>
                     </div>
-                ) : null}
+                </ContextMenu.Trigger>
 
-                {activity.tier ? (
-                    <div className='bg-[#1F2937] px-3 inline-block rounded-full text-center'>
-                        <p className='text-white'>
-                            {formatTier(activity.tier)}
-                        </p>
-                    </div>
-                ) : null}
-            </div>
+                <ContextMenu.Portal>
+                    <ContextMenu.Content className='z-50 min-w-[8rem] rounded-md border border-color_gray bg-color_darkblue p-1'>
+                        <ContextMenu.Item
+                            className='text-white select-none rounded-sm px-2 py-1.5 outline-none focus:bg-[#1F2937] focus:text-white data-[disabled]:opacity-40'
+                            onSelect={() => {
+                                navigator.clipboard.writeText(activity.message).then(() => {
+                                    toast('Pasted to clipboard', {
+                                        style: {
+                                            background: 'rgb(1, 31, 16)',
+                                            borderWidth: '0.5px',
+                                            borderColor: 'rgb(2, 62, 30)',
+                                            color: 'rgb(93, 244, 169)'
+                                        },
+                                        duration: 5000
+                                    });
+                                });
+                            }}
+                            disabled={activity.message ? false : true}
+                        >
+                            Copy text
+                        </ContextMenu.Item>
 
-            {activity.message ? (
-                <div style={{ userSelect: 'text' }} className='overflow-hidden'>
-                    <Linkify componentDecorator={(decoratedHref: any, decoratedText: any, key: any) => (
-                        <a rel='noreferrer' target="_blank" onClick={() => handleLinkClick(decoratedHref)} key={key} className="color_purple hover:cursor-pointer">
-                            {decoratedText}
-                        </a>
-                    )}>
-                        <p className='text-gray-200'>{activity.message}</p>
-                    </Linkify>
-                </div>
-            ) : null}
+                        <ContextMenu.Item
+                            className='text-white select-none rounded-sm px-2 py-1.5 outline-none focus:bg-[#1F2937] focus:text-white data-[disabled]:opacity-40'
+                            onSelect={() => {
+                                const match = activity.message.match(urlRegex);
+                                if (!match || match.length === 0) {
+                                    toast.warning('Could not retrieve link', {
+                                        style: {
+                                            background: 'rgb(44, 6, 8)',
+                                            borderWidth: '0.5px',
+                                            borderColor: 'rgb(76, 4, 9)',
+                                            color: 'rgb(254, 158, 161)'
+                                        },
+                                        duration: 5000
+                                    });
+                                    return;
+                                }
 
-            <div className='absolute right-6 top-1/2 transform -translate-y-1/2'>
-                {isHovering ? (
-                    <Button onClick={replayActivity}>
-                        <svg width="14px" height="14px" viewBox="-1.5 0 19 19">
-                            <g fill="none" fillRule="evenodd">
-                                <path d="M8 4a7 7 0 1 1-7 7" stroke="#DADBDD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                <path d="m6.826 7.886-5.13-3.581c-.216-.126-.26-.365-.098-.534a.5.5 0 0 1 .098-.076l5.13-3.58c.324-.19.784-.139 1.027.114A.5.5 0 0 1 8 .571v6.858C8 7.744 7.672 8 7.266 8a.9.9 0 0 1-.44-.114" fill="#DADBDD" />
-                            </g>
-                        </svg>
-                    </Button>
-                ) : (
-                    <p className='text-gray-400'>{calculateTimeDifference()}</p>
-                )}
-            </div>
-        </div>
+                                navigator.clipboard.writeText(match[0]).then(() => {
+                                    toast('Pasted to clipboard', {
+                                        style: {
+                                            background: 'rgb(1, 31, 16)',
+                                            borderWidth: '0.5px',
+                                            borderColor: 'rgb(2, 62, 30)',
+                                            color: 'rgb(93, 244, 169)'
+                                        },
+                                        duration: 5000
+                                    });
+                                });
+                            }}
+                            disabled={urlRegex.test(activity.message) ? false : true}
+                        >
+                            Copy link
+                        </ContextMenu.Item>
+
+                        <ContextMenu.Separator className="h-[1px] bg-color_gray m-[5px] -mx-1" />
+
+                        <ContextMenu.Item
+                            className='text-white select-none rounded-sm px-2 py-1.5 outline-none focus:bg-[#1F2937] focus:text-white'
+                            onSelect={() => replayActivity()}
+                        >
+                            Replay
+                        </ContextMenu.Item>
+
+                    </ContextMenu.Content>
+                </ContextMenu.Portal>
+            </ContextMenu.Root>
         </>
     );
 };
