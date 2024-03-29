@@ -17,4 +17,3 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## ToDo-List
 
 - "x Missed Activities" if not on top panel side
-- save settings in localStorage
